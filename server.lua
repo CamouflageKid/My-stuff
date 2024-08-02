@@ -8,6 +8,7 @@ function table.contains(table, element)
 end
 
 
+peripheral.find("modem", rednet.close)
 peripheral.find("modem", rednet.open)
 
 term.clear()

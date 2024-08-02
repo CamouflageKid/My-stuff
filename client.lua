@@ -1,35 +1,38 @@
-peripheral.find("modem", rednet.open)
+function Client_Init()
 
-term.clear()
+    peripheral.find("modem", rednet.open)
+
+    term.clear()
+    term.setCursorPos(1, 1)
+    term.write("Please enter the url.")
+    term.setCursorPos(1, 19)
+    local data_server_connection = read()
+    term.setCursorPos(1, 18)
+    term.clearLine()
+    term.setCursorPos(1, 1)
+
+    url_and_name = {}
+
+    for data_word in string.gmatch(data_server_connection, '([^/]+)') do
+        url_and_name[#url_and_name+1] = data_word
+    end
+
+    local url = url_and_name[1]
+    local name = url_and_name[2]
 
 
-term.setCursorPos(1, 1)
-term.write("Please enter the url.")
-term.setCursorPos(1, 19)
-local data_server_connection = read()
-term.setCursorPos(1, 18)
-term.clearLine()
-term.setCursorPos(1, 1)
+    id = rednet.lookup(url, name)
 
-url_and_name = {}
 
-for data_word in string.gmatch(data_server_connection, '([^/]+)') do
-    url_and_name[#url_and_name+1] = data_word
+    sleep(0.05)
+    if not id then
+        print("No computer found.")
+    end
 end
 
-local url = url_and_name[1]
-local name = url_and_name[2]
 
 
-id = rednet.lookup(url, name)
-
-
-sleep(0.05)
-if not id then
-    print("No computer found.")
-end
-function Connection()
-
+local function Connection()
     while true do
         sleep(0.05)
         if id then
@@ -61,41 +64,6 @@ function Connection()
 end
 
 
-
-
-function Main()
-    while true do
-        sleep(0.05)
-        if id then
-            term.setCursorPos(1, 1)
-            term.setCursorPos(1, 19)
-            local get = read()
-            term.setCursorPos(1, 18)
-            term.clearLine()
-            term.setCursorPos(1, 1)
-
-            rednet.send(id, get, "Is_Online")
-
-            local c, d = rednet.receive("Is_Online.Return", 1)
-
-            if c then
-                if d == true then
-                    print("Computer "..get.." is online!")
-                    term.setCursorPos(1, 15)
-                    term.clearLine()
-                    term.setCursorPos(1, 14)
-                    term.clearLine()
-                else
-                    print("Computer "..get.." is offline!")
-                    term.setCursorPos(1, 15)
-                    term.clearLine()
-                    term.setCursorPos(1, 14)
-                    term.clearLine()
-                end
-            end
-        end
-    end
+function Client_Loop(func)
+    parallel.waitForAll(Connection, func)
 end
-
-
-parallel.waitForAll(Connection, Main)
