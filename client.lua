@@ -1,3 +1,8 @@
+url = ""
+name = ""
+
+
+
 function Client_Init()
 
     peripheral.find("modem", rednet.open)
@@ -17,8 +22,8 @@ function Client_Init()
         url_and_name[#url_and_name+1] = data_word
     end
 
-    local url = url_and_name[1]
-    local name = url_and_name[2]
+    url = url_and_name[1]
+    name = url_and_name[2]
 
 
     id = rednet.lookup(url, name)
