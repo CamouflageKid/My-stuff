@@ -99,7 +99,10 @@ function IsOnline()
     end
 end
 
-server_function = nil
+function null_func() end
+
+
+server_function = null_func
 
 function server_setupMain(Main)
     server_function = Main
