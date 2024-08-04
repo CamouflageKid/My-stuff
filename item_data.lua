@@ -12,7 +12,7 @@ if not fs.exists("data_config.lua") then
     file.write(system_name)
     file.close()
 else
-    local file = fs.open("data-config.lua", "r")
+    local file = fs.open("data_config.lua", "r")
     system_name = file.readAll()
     file.close()
 end
