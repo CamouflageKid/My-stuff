@@ -2,6 +2,7 @@ local history_table = {}
 
 
 function Main()
+    term.clear()
     while true do
         sleep(0.05)
         if id then
@@ -14,7 +15,7 @@ function Main()
             end
 
             term.setCursorPos(1, 18)
-            term.clearLine()
+            term.clear()
             term.setCursorPos(1, 1)
 
             rednet.send(id, get, "is_in_storage")
