@@ -8,6 +8,7 @@ local file = fs.open("disk/.artist.d/src/launch.lua", "w")
 file.write('local context = require "artist"()\n-- Feel free to include custom modules here:\ncontext:require "item_data"\ncontext.config:save()\ncontext:run()')
 file.close()
 
+shell.setDir("/.")
 local file = fs.open("startup.lua", "w")
 file.write('shell.run("disk/artist.lua")')
 file.close()
