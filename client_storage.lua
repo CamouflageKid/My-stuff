@@ -32,6 +32,10 @@ function Main()
     end
 end
 
+if not fs.exists("client.lua") then
+    shell.run("wget https://raw.githubusercontent.com/CamouflageKid/My-stuff/main/client.lua")
+end
+
 
 require("client")
 
