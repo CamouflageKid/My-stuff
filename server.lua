@@ -99,6 +99,12 @@ function IsOnline()
     end
 end
 
+server_function = nil
+
+function server_setupMain(Main)
+    server_function = Main
+end
+
 function server_loop()
-    parallel.waitForAll(connection, disconnect, IsOnline)
+    parallel.waitForAll(connection, disconnect, IsOnline, server_function)
 end
