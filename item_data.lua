@@ -1,12 +1,22 @@
-term.clear()
-term.setCursorPos(1, 1)
-term.write("Please enter the name for this system.")
-term.setCursorPos(1, 13)
-system_name = read()
-term.setCursorPos(1, 12)
-term.clearLine()
-term.setCursorPos(1, 1)
+if not fs.exists("data_config.lua") then
+    term.clear()
+    term.setCursorPos(1, 1)
+    term.write("Please enter the name for this system.")
+    term.setCursorPos(1, 13)
+    system_name = read()
+    term.setCursorPos(1, 12)
+    term.clearLine()
+    term.setCursorPos(1, 1)
 
+    local file = fs.open("data_config.lua", "w")
+    file.write(system_name)
+    file.close()
+else
+    local file = fs.open("data-config.lua", "r")
+    system_name = file.readAll()
+    file.close()
+end
+    
 peripheral.find("modem", rednet.open)
 
 
