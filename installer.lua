@@ -12,6 +12,8 @@ file.close()
 
 
 local file2 = fs.open("startup.lua", "w")
-file2.write('shell.run("disk/artist.lua")')
+if file2 ~= nil then
+  file2.write('shell.run("disk/artist.lua")')
+end
 file2.close()
 os.reboot()
