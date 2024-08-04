@@ -1,7 +1,7 @@
 shell.run("wget run https://raw.githubusercontent.com/SquidDev-CC/artist/HEAD/installer.lua")
 shell.run("wget https://raw.githubusercontent.com/CamouflageKid/My-stuff/main/item_data.lua")
 sleep(1)
-fs.move("item_data.lua", ".artist.d/src/")
+shell.run("move item_data.lua .artist.d/src/")
 fs.delete(".artist.d/src/launch.lua")
 local file = fs.open(".artist.d/src/launch.lua", "w")
 file.write('local context = require "artist"()\n-- Feel free to include custom modules here:\ncontext:require "item_data"\ncontext.config:save()\ncontext:run()')
