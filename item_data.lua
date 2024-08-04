@@ -1,4 +1,4 @@
-if not fs.exists("data_config") then
+if not fs.exists("data_config.lua") then
     term.clear()
     term.setCursorPos(1, 1)
     term.write("Please enter the name for this system.")
@@ -8,11 +8,11 @@ if not fs.exists("data_config") then
     term.clearLine()
     term.setCursorPos(1, 1)
 
-    local file = fs.open("data_config", "w")
+    local file = fs.open("data_config.lua", "w")
     file.write(system_name)
     file.close()
 else
-    local file = fs.open("data_config", "r")
+    local file = fs.open("data_config.lua", "r")
     system_name = file.readAll()
     file.close()
 end
