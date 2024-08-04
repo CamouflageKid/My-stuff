@@ -8,47 +8,49 @@ function table.contains(table, element)
 end
 
 
-peripheral.find("modem", rednet.close)
-peripheral.find("modem", rednet.open)
-
-term.clear()
-
-
-while true do
+function server_init()
     
-    term.setCursorPos(1, 1)
-    term.write("Please enter the url you will host.")
-    term.setCursorPos(1, 19)
-    local data_server_connection = read()
-    term.setCursorPos(1, 18)
-    term.clearLine()
+    peripheral.find("modem", rednet.close)
+    peripheral.find("modem", rednet.open)
 
-    url_and_name = {}
-
-    for data_word in string.gmatch(data_server_connection, '([^/]+)') do
-        url_and_name[#url_and_name+1] = data_word
-    end
-
-    local url = url_and_name[1]
-    local name = url_and_name[2]
+    term.clear()
 
 
-    local a = rednet.lookup(url, name)
-
-    if a and a ~= os.getComputerID() then
-        term.write("Url not available.")
-    else
-        rednet.host(url, name)
-        print("Hosting server under: "..url.."/"..name)
-        sleep(5)
-        term.setCursorPos(1,18)
+    while true do
+        
+        term.setCursorPos(1, 1)
+        term.write("Please enter the url you will host.")
+        term.setCursorPos(1, 19)
+        local data_server_connection = read()
+        term.setCursorPos(1, 18)
         term.clearLine()
-        break
-    end
-end
 
-local connected_id_list = {}
-term.setCursorPos(1, 1)
+        url_and_name = {}
+
+        for data_word in string.gmatch(data_server_connection, '([^/]+)') do
+            url_and_name[#url_and_name+1] = data_word
+        end
+
+        local url = url_and_name[1]
+        local name = url_and_name[2]
+
+
+        local a = rednet.lookup(url, name)
+
+        if a and a ~= os.getComputerID() then
+            term.write("Url not available.")
+        else
+           rednet.host(url, name)
+           print("Hosting server under: "..url.."/"..name)
+           sleep(5)
+           term.setCursorPos(1,18)
+           term.clearLine()
+           break
+        end
+    end
+    connected_id_list = {}
+    term.setCursorPos(1, 1)
+end
 
 
 local function connection()
@@ -97,4 +99,6 @@ function IsOnline()
     end
 end
 
-parallel.waitForAll(connection, disconnect, IsOnline)
+function server_loop()
+    parallel.waitForAll(connection, disconnect, IsOnline)
+end
