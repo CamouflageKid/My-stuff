@@ -72,13 +72,15 @@ end
 require("server")
 
 data_slots = {}
+local id_storage = nil
 
 function Main()
     while true do
 
         sleep(0.05)
 
-        local id, data = rednet.receive(storage_monitered)
+        id, data = rednet.receive(storage_monitered)
+        id_storage = id
 
         
         if data ~= nil then
@@ -129,7 +131,7 @@ end
 
 server_init()
 
-function serverData()
+function in_storage()
     while true do
         local id, data = rednet.receive("is_in_storage")
         local item_num = 0
@@ -146,6 +148,36 @@ function serverData()
         end
         rednet.send(id, item_num, "is_in_storage.Return")
     end
+end
+
+list_of_crafts = {}
+function craft_item_receive()
+    while true do
+        local sent_id, sent_data = rednet.receive("craft_item")
+        list_of_crafts[#list_of_crafts+1] = sent_data
+        print(#list_of_crafts)
+    end
+end
+
+function craft_item()
+    while true do
+        sleep(0.05)
+        if #list_of_crafts > 0 then
+            sleep(2.5)
+            rednet.send(id_storage, list_of_crafts[1], "crafting_recipe")
+            table.remove(list_of_crafts, 1)
+        end
+        print(#list_of_crafts)
+
+        --if list_of_crafts[1] ~= nil then
+        --    rednet.send(id_storage, list_of_crafts[1], "crafting_recipe")
+        --    table.remove(list_of_crafts, 1)
+        --end
+    end
+end
+
+function serverData()
+    parallel.waitForAll(in_storage, craft_item_receive, craft_item)
 end
 
 

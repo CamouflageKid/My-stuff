@@ -1,8 +1,14 @@
 local history_table = {}
 
+local function strtotable(string_)
+    local list = {}
+    for stuff in string.gmatch(string_, '([^, ]+)') do
+        list[#list+1] = stuff
+    end
+    return list
+end
 
 function Main()
-    term.clear()
     while true do
         sleep(0.05)
         if id then
@@ -15,12 +21,14 @@ function Main()
             end
 
             term.setCursorPos(1, 18)
-            term.clear()
+            term.clearLine()
             term.setCursorPos(1, 1)
 
-            rednet.send(id, get, "is_in_storage")
+            if get ~= nil then
+                rednet.send(id, strtotable(get), "craft_item")
+            end
 
-            local c, d = rednet.receive("is_in_storage.Return", 1)
+            --local c, d = rednet.receive("craft_item.Return", 1)
 
             if c then
                 print("There are "..d.." "..get.." in the system.")

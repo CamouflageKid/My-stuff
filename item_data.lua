@@ -48,14 +48,6 @@ return function(context)
 
 
     local function craft(craft)
-
-        redstone.setOutput("back", true)
-        redstone.setOutput("front", true)
-        redstone.setOutput("left", true)
-        redstone.setOutput("right", true)
-        redstone.setOutput("top", true)
-        redstone.setOutput("bottom", true)
-
         local function protect_slots(hash)
             for i in pairs(hash) do
                 local name = items.unhash_item(hash[i])
@@ -108,40 +100,75 @@ return function(context)
             return count
         end
 
+        local function get_turtle_name()
+            local this_craft_turtle
+            local id
+            for _, side in ipairs(redstone.getSides()) do
+              if peripheral.getType(side) == "modem" then
+                local turtle = peripheral.find("turtle")
+                if turtle then
+                    local name = peripheral.getName(turtle)
+                    id = turtle.getID()
+                    turtle.turnOn()
+                    if this_craft_turtle then error("Cannot find turtle name: multiple modems", 0) end
+                    this_craft_turtle = name
+                end
+              end
+            end
+            if this_craft_turtle then return this_craft_turtle, id end
+            --error("Cannot find turtle name: none on the network", 0)
+        end
+        
+
         local item_counts = table.num_of_same_element(craft)
-        local has_enough = false
+        local has_enough = true
 
 
-        for i in pairs(craft) do
-            local a = i
+        local craft_turtle, turtle_craft_id = get_turtle_name()
+        if this_turtle == craft_turtle then
+            error("Cannot find craft-turtle name: none on the network", 0)
+        end
 
-            if a >= 4 and a < 8 then
-                a = i + 1
-            end
+        if craft_turtle ~= nil then
+            for i in pairs(craft) do
+                local a = i
 
-            if a >= 8 and a < 12 then
-                a = i + 2
-            end
+                if a >= 4 and a < 8 then
+                    a = i + 1
+                end
 
-            local hash = match_hash(craft[i], item_hash_list)
+                if a >= 8 and a < 12 then
+                    a = i + 2
+                end
 
-            if Key_contains(item_hash_count_list, craft[i]) then
-                if item_hash_count_list[craft[i]] >= item_counts[craft[i]] then
-                    has_enough = true
-                else
-                    has_enough = false
+                local hash = match_hash(craft[i], item_hash_list)
+
+                if Key_contains(item_hash_count_list, craft[i]) then
+                    if item_hash_count_list[craft[i]] >= item_counts[craft[i]] then
+                        if has_enough ~= false then
+                            has_enough = true
+                        end
+                    else
+                        has_enough = false
+                    end
+                end
+
+                if hash ~= nil and has_enough == true then
+                    items.extract(items, craft_turtle, hash, 1, a)
                 end
             end
 
-            if hash ~= nil and has_enough then
-                items.extract(items, this_turtle, hash, 1, a)
+            if has_enough == true then
+                --rednet.broadcast("", "craft")
+                local a, b = rednet.receive("crafted", 5)
+                if a then
+                    items.insert(items, craft_turtle, 1, 64)
+                else
+                    for i = 1, 16 do
+                        items.insert(items, craft_turtle, i, 64)
+                    end
+                end
             end
-        end
-
-        if has_enough then
-            protect_slots(item_hash_list)
-            turtle.craft()
-            unprotect_slots()
         end
 
 
@@ -204,15 +231,9 @@ return function(context)
 
             rednet.broadcast(data, system_name)
 
-            id, data  = rednet.receive("crafting_recipe",0.5)
+            local id, data_  = rednet.receive("crafting_recipe", 0.5)
             if id ~= nil then
-                craft(data)
-                redstone.setOutput("back", false)
-                redstone.setOutput("front", false)
-                redstone.setOutput("left", false)
-                redstone.setOutput("right", false)
-                redstone.setOutput("top", false)
-                redstone.setOutput("bottom", false)
+                craft(data_)
             end
         end
     end
