@@ -36,6 +36,8 @@ function server_init()
             file.close()
         end
 
+        term.setCursorPos(1, 18)
+
         url_and_name = {}
 
         for data_word in string.gmatch(data_server_connection, '([^/]+)') do
@@ -53,7 +55,7 @@ function server_init()
         else
            rednet.host(url, name)
            print("Hosting server under: "..url.."/"..name)
-           sleep(5)
+           sleep(1)
            term.setCursorPos(1,18)
            term.clearLine()
            break
