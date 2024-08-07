@@ -17,13 +17,24 @@ function server_init()
 
 
     while true do
+
+
+        if not fs.exists("server_data_config.lua") then
+            term.setCursorPos(1, 1)
+            term.write("Please enter the url you will host.")
+            term.setCursorPos(1, 19)
+            local data_server_connection = read()
+            term.setCursorPos(1, 18)
+            term.clearLine()
         
-        term.setCursorPos(1, 1)
-        term.write("Please enter the url you will host.")
-        term.setCursorPos(1, 19)
-        local data_server_connection = read()
-        term.setCursorPos(1, 18)
-        term.clearLine()
+            local file = fs.open("server_data_config.lua", "w")
+            file.write(data_server_connection)
+            file.close()
+        else
+            local file = fs.open("server_data_config.lua", "r")
+            data_server_connection = file.readAll()
+            file.close()
+        end
 
         url_and_name = {}
 
